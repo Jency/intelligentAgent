@@ -1,0 +1,107 @@
+19/03 15:37:44 FINE is.InfoServer|Using game path: C:\Dropbox\TACAgent\Server\public_html\history
+19/03 15:37:52 INFO is.AppletServer|viewer server started at *:4041
+19/03 15:37:53 SEVERE is.InfoServer|could not connect to TAC server:
+java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.connect0(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at se.sics.tac.line.LineConnection.start(LineConnection.java:168)
+	at se.sics.tac.is.InfoServer.connect(InfoServer.java:793)
+	at se.sics.tac.is.InfoServer.<init>(InfoServer.java:354)
+	at se.sics.tac.is.InfoServer.main(InfoServer.java:1284)
+19/03 15:38:23 SEVERE is.ISTimerTask|forcing reconnection to the server after 31 seconds
+19/03 15:38:23 SEVERE is.InfoServer|Reconnecting to TAC server at 127.0.0.1:4039
+19/03 15:38:24 SEVERE is.InfoServer|could not connect to TAC server:
+java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.connect0(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at se.sics.tac.line.LineConnection.start(LineConnection.java:168)
+	at se.sics.tac.is.InfoServer.connect(InfoServer.java:793)
+	at se.sics.tac.is.InfoServer.reconnect(InfoServer.java:816)
+	at se.sics.tac.is.ISTimerTask.checkPong(ISTimerTask.java:59)
+	at se.sics.tac.is.ISTimerTask.run(ISTimerTask.java:47)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+19/03 15:39:03 SEVERE is.ISTimerTask|forcing reconnection to the server after 38 seconds
+19/03 15:39:03 SEVERE is.InfoServer|Reconnecting to TAC server at 127.0.0.1:4039
+19/03 15:39:04 SEVERE is.InfoServer|could not connect to TAC server:
+java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.connect0(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at se.sics.tac.line.LineConnection.start(LineConnection.java:168)
+	at se.sics.tac.is.InfoServer.connect(InfoServer.java:793)
+	at se.sics.tac.is.InfoServer.reconnect(InfoServer.java:816)
+	at se.sics.tac.is.ISTimerTask.checkPong(ISTimerTask.java:59)
+	at se.sics.tac.is.ISTimerTask.run(ISTimerTask.java:47)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+19/03 15:39:43 SEVERE is.ISTimerTask|forcing reconnection to the server after 38 seconds
+19/03 15:39:43 SEVERE is.InfoServer|Reconnecting to TAC server at 127.0.0.1:4039
+19/03 15:39:44 SEVERE is.InfoServer|could not connect to TAC server:
+java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.connect0(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at se.sics.tac.line.LineConnection.start(LineConnection.java:168)
+	at se.sics.tac.is.InfoServer.connect(InfoServer.java:793)
+	at se.sics.tac.is.InfoServer.reconnect(InfoServer.java:816)
+	at se.sics.tac.is.ISTimerTask.checkPong(ISTimerTask.java:59)
+	at se.sics.tac.is.ISTimerTask.run(ISTimerTask.java:47)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+19/03 15:40:23 SEVERE is.ISTimerTask|forcing reconnection to the server after 38 seconds
+19/03 15:40:23 SEVERE is.InfoServer|Reconnecting to TAC server at 127.0.0.1:4039
+19/03 15:40:24 SEVERE is.InfoServer|could not connect to TAC server:
+java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.connect0(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.connect(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at java.net.Socket.<init>(Unknown Source)
+	at se.sics.tac.line.LineConnection.start(LineConnection.java:168)
+	at se.sics.tac.is.InfoServer.connect(InfoServer.java:793)
+	at se.sics.tac.is.InfoServer.reconnect(InfoServer.java:816)
+	at se.sics.tac.is.ISTimerTask.checkPong(ISTimerTask.java:59)
+	at se.sics.tac.is.ISTimerTask.run(ISTimerTask.java:47)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
