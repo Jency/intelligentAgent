@@ -41,6 +41,10 @@ Thumbs.db
 *.classpath
 *.project
 
+# Compiled binaries #
+#####################
+TACAgent/bin
+
 
 # TAC server logs #
 ###################
