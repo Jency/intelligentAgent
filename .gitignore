@@ -34,3 +34,23 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+*.lck
+
+# Eclipse files #
+#################
+*.classpath
+*.project
+
+
+# TAC server logs #
+###################
+TACAgent/Server/state
+TACAgent/Server/logs
+TACAgent/Server/public_html/history
+TACAgent/Server/config/tacserver.conf
+
+# TAC agent logs and conf files #
+##################
+TACAgent/games/
+TACAgent/agent.conf
+TACAgent/bin/agent.conf
