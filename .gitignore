@@ -45,14 +45,6 @@ Thumbs.db
 #####################
 TACAgent/bin
 
-
-# TAC server logs #
-###################
-TACAgent/Server/state
-TACAgent/Server/logs
-TACAgent/Server/public_html/history
-TACAgent/Server/config/tacserver.conf
-
 # TAC agent logs and conf files #
 ##################
 TACAgent/games/
