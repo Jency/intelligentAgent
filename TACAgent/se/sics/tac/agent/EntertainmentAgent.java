@@ -1,4 +1,6 @@
-package se.sics.tac.datastructures;
+package se.sics.tac.agent;
+
+import se.sics.tac.datastructures.SubAgent;
 
 
 public class EntertainmentAgent extends SubAgent {

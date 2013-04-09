@@ -1,5 +1,7 @@
 package se.sics.tac.datastructures;
 
+import se.sics.tac.agent.MasterAgent;
+
 public abstract class SubAgent {
 	MasterAgent masterAgent;
 	
