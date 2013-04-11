@@ -1,26 +1,82 @@
 package se.sics.tac.agent;
+
 import java.util.*;
-
-import se.sics.tac.aw.DummyAgent;
+import se.sics.tac.aw.AgentImpl;
+import se.sics.tac.aw.Bid;
 import se.sics.tac.aw.TACAgent;
-import se.sics.tac.datastructures.ListItem;
+import se.sics.tac.datastructures.*;
+import se.sics.tac.util.ArgEnumerator;
 
 
-public class MasterAgent {
+public class MasterAgent extends AgentImpl{
 	public static void main(String[] args) {
+		// Start up the agent
 		TACAgent.main(args);
 	}
 	
-	List<ListItem> ShoppingList = new ArrayList<ListItem>();
+	List<Client> clientList = new ArrayList<Client>();
 	FlightAgent flightAgent;
 	HotelAgent hotelAgent;
 	EntertainmentAgent entertainmentAgent;
 	
-	public DummyAgent auctionInterface;
-	
 	public MasterAgent(){
-		// Initialise the dummy agent
-		auctionInterface = new DummyAgent();
+	}
+
+	@Override
+	protected void init(ArgEnumerator args) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void bidUpdated(Bid bid) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bidRejected(Bid bid) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bidError(Bid bid, int error) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gameStarted() {
+		// Load customer preferences into table
+		for (int i = 0; i < 8; i++){		
+			Client newClient = new Client();
+			
+			newClient.arrivalDay = agent.getClientPreference(i, TACAgent.ARRIVAL);
+			newClient.departureDay = agent.getClientPreference(i, TACAgent.DEPARTURE);
+			newClient.hotelvalue = agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
+			newClient.aligatorWrestlingValue = agent.getClientPreference(i, TACAgent.E1);
+			newClient.amusementParkValue = agent.getClientPreference(i, TACAgent.E2);
+			newClient.museumValue = agent.getClientPreference(i, TACAgent.E3);
+					
+			clientList.add(newClient);
+		}
+		
+		// Fire off the sub-agent threads
+		
+		System.out.println("Initialisd game");
+		
+	}
+
+	@Override
+	public void gameStopped() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void auctionClosed(int auction) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
