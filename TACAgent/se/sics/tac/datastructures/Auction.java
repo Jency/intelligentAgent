@@ -1,4 +1,4 @@
-package se.sics.tac.aw;
+package se.sics.tac.datastructures;
 
 public class Auction {
 	int initialPrice;

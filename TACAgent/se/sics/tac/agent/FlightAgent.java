@@ -1,7 +1,5 @@
 package se.sics.tac.agent;
 
-import se.sics.tac.datastructures.SubAgent;
-
 public class FlightAgent extends SubAgent {
 
 	@Override
@@ -9,7 +7,10 @@ public class FlightAgent extends SubAgent {
 	}
 
 	@Override
-	public void mainLoop() {
+	public void run() {
+		while (true){
+			// TODO: Write agent logic
+		}
 	}
 
 }

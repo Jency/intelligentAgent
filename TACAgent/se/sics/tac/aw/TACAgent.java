@@ -2145,10 +2145,8 @@ public class TACAgent implements Task, TACMessageReceiver {
       config = new Properties();
     }
 
-    String agentClass =
-      trim(a.getArgument("-agentimpl",
-			 config.getProperty("agentimpl",
-					    "se.sics.tac.aw.DummyAgent")));
+    // Use the Master agent rather than the dummy agent
+    String agentClass = "se.sics.tac.agent.MasterAgent";
 
     // Try to create the agent
     AgentImpl agent;

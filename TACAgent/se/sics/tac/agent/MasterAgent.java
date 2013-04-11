@@ -18,9 +18,6 @@ public class MasterAgent extends AgentImpl{
 	FlightAgent flightAgent;
 	HotelAgent hotelAgent;
 	EntertainmentAgent entertainmentAgent;
-	
-	public MasterAgent(){
-	}
 
 	@Override
 	protected void init(ArgEnumerator args) {
@@ -47,7 +44,7 @@ public class MasterAgent extends AgentImpl{
 
 	@Override
 	public void gameStarted() {
-		// Load customer preferences into table
+		// Load client preferences into table
 		for (int i = 0; i < 8; i++){		
 			Client newClient = new Client();
 			
@@ -61,7 +58,24 @@ public class MasterAgent extends AgentImpl{
 			clientList.add(newClient);
 		}
 		
-		// Fire off the sub-agent threads
+		// Initialise the sub-agent objects
+		flightAgent = new FlightAgent();
+		flightAgent.masterAgent = this;
+		flightAgent.initialise();
+		
+		hotelAgent = new HotelAgent();
+		hotelAgent.masterAgent = this;
+		flightAgent.initialise();
+		
+		entertainmentAgent = new EntertainmentAgent();
+		entertainmentAgent.masterAgent = this;
+		entertainmentAgent.initialise();
+		
+		// Fire off the sub-agent thread
+		flightAgent.start();
+		hotelAgent.start();
+		entertainmentAgent.start();
+		
 		
 		System.out.println("Initialisd game");
 		

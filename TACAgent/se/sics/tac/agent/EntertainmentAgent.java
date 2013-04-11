@@ -1,14 +1,17 @@
 package se.sics.tac.agent;
 
-import se.sics.tac.datastructures.SubAgent;
-
-
 public class EntertainmentAgent extends SubAgent {
 
 	@Override
-	public void initialise() {}
+	public void initialise() {
+		
+	}
 
 	@Override
-	public void mainLoop() {}
+	public void run() {
+		while (true){
+			// TODO: Write agent logic
+		}
+	}
 
 }
