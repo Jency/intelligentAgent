@@ -7,7 +7,7 @@ There are three sub agents (EntertainmentAgent, FlightAgent or HotelAgent). This
 You can find out what each customer needs using "MasterAgent.clientList". This stores each clients preferences. As you work on each client, you can update the status for each, to keep track of your agent's progress
 
 
-Features of the TACAgent1
+Features of the TACAgent
 -------------------------
 - EntertainmentAgent 
 - FlightAgent 
