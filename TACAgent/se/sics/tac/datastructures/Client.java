@@ -14,7 +14,13 @@ public class Client {
 	public itemStatus hotelStatus = itemStatus.fresh;
 	public itemStatus aligatorWrestlingStatus = itemStatus.fresh;
 	public itemStatus amusementParkStatus = itemStatus.fresh;
-	public itemStatus museumStatus  = itemStatus.fresh;
+	public itemStatus museumStatus = itemStatus.fresh;
+	
+	public hotelType hotelAssignment;
+	public int aligatorWrestlingDay = 0;
+	public int amusementParkDay = 0;
+	public int museumDay = 0;
 	
 	public enum itemStatus{fresh, bidding, purchased, failed};
+	public enum hotelType{cheapHotel, expensiveHotel};
 }
