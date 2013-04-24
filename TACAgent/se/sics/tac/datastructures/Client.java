@@ -21,6 +21,6 @@ public class Client {
 	public int amusementParkDay = 0;
 	public int museumDay = 0;
 	
-	public enum itemStatus{fresh, bidding, purchased, failed};
+	public enum itemStatus{fresh, requested, bidding, purchased, failed};
 	public enum hotelType{cheapHotel, expensiveHotel};
 }
