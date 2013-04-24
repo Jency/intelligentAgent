@@ -2,6 +2,9 @@ This is the beta 9 version of the SICS TAC Classic AgentWare for Java. The main 
 
 Our group named TICKTAC team. The members of team are Emem Adegbola (ea1g09), Suraj Padhy (sp3g12), Xiaohu Zhou (xz3g12).
 
+the registered user name in the server: TICKTAC
+password: 123456
+
 There are three sub agents (EntertainmentAgent, FlightAgent or HotelAgent). This is run automatically, when a game starts.
 
 You can find out what each customer needs using "MasterAgent.clientList". This stores each clients preferences. As you work on each client, you can update the status for each, to keep track of your agent's progress
