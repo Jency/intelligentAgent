@@ -13,7 +13,14 @@ public class EntertainmentAgent extends SubAgent {
 	int[] aligators = new int[5];
 	int[] museum = new int[5];
 	int[] park = new int[5];
+	
+	//int TICKET_BUY_PRICE = 100;
+	int TICKET_SELL_PRICE = 75;
 
+	int ESTIMATED_CLOSE_PRICE = 80;
+	
+	float PURCHASE_PROFIT_MARGIN = 0.7f; //(Aim to make at least 30% on buying entertainment)
+	
 	@Override
 	public void initialise() {
 		// Check what entertainment tickets we have been assigned
@@ -27,9 +34,6 @@ public class EntertainmentAgent extends SubAgent {
 					museum[i] = masterAgent.agent.getOwn(TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT,TACAgent.TYPE_MUSEUM, i));
 					park[i] = masterAgent.agent.getOwn(TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_AMUSEMENT, i));
 				}
-				
-				// Rationalise the clients' entertainment requests
-				//rationaliseCustomerInterest();
 				
 				
 				for (Client client: masterAgent.clientList){
@@ -45,9 +49,9 @@ public class EntertainmentAgent extends SubAgent {
 					Collections.reverse(entertainmentRanking);
 					
 					// for each day the client spends on holiday except the last
-					for (int day = client.arrivalDay ; day <= client.departureDay; day++ ){
+					for (int day = client.arrivalDay ; day < client.departureDay; day++ ){
 						
-						// Add the next available entertainment type to the list
+						// Request the relevent entertainment
 						if  (entertainmentRanking.size() > 0){
 							EntertainmentTypes type = entertainmentRanking.get(0).type;
 							
@@ -88,30 +92,61 @@ public class EntertainmentAgent extends SubAgent {
 				for (Client client : masterAgent.clientList){
 					if (client.aligatorWrestlingStatus == itemStatus.requested){
 						int auction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_ALLIGATOR_WRESTLING, client.aligatorWrestlingDay);
-						Bid AWBid= new Bid(auction);
-						AWBid.addBidPoint(1, client.aligatorWrestlingValue);
+						Bid AWBid = new Bid(auction);
+						AWBid.addBidPoint(1, client.aligatorWrestlingValue * PURCHASE_PROFIT_MARGIN);
 						masterAgent.agent.submitBid(AWBid);
 						
 						client.aligatorWrestlingStatus = itemStatus.bidding;
+						System.out.println("Buying aligator ticket on day " + client.aligatorWrestlingDay + " for " + client.aligatorWrestlingValue * PURCHASE_PROFIT_MARGIN);
 					}
 					if (client.amusementParkStatus == itemStatus.requested){
 						int auction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_AMUSEMENT, client.amusementParkDay);
-						Bid APBid= new Bid(auction);
-						APBid.addBidPoint(1, client.amusementParkValue);
+						Bid APBid = new Bid(auction);
+						APBid.addBidPoint(1, client.amusementParkValue * PURCHASE_PROFIT_MARGIN);
 						masterAgent.agent.submitBid(APBid);
 						
 						client.amusementParkStatus = itemStatus.bidding;
+						System.out.println("Buying park ticket on day " + client.amusementParkDay + " for " + client.amusementParkValue * PURCHASE_PROFIT_MARGIN);
 					}
 					if (client.museumStatus == itemStatus.requested){
 						int auction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_MUSEUM, client.museumDay);
-						Bid MUBid= new Bid(auction);
-						MUBid.addBidPoint(1, client.museumValue);
+						Bid MUBid = new Bid(auction);
+						MUBid.addBidPoint(1, client.museumValue * PURCHASE_PROFIT_MARGIN);
 						masterAgent.agent.submitBid(MUBid);
 						
 						client.museumStatus = itemStatus.bidding;
+						System.out.println("Buying museum ticket on day " + client.museumDay + " for " + client.museumValue * PURCHASE_PROFIT_MARGIN);
 					}
 				}
 				
+				// Put out sell bids for tickets we do not need (average price + 10%)
+				for (int day = 1; day < 5; day++){
+					int aligatorAuction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_ALLIGATOR_WRESTLING, day);
+					int parkAuction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_AMUSEMENT, day);
+					int museumAuction = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_MUSEUM, day);
+					
+					
+					if (aligators[day] > 0){
+						Bid ALBid = new Bid(aligatorAuction);
+						ALBid.addBidPoint(-aligators[day], TICKET_SELL_PRICE);
+						masterAgent.agent.submitBid(ALBid);
+						System.out.println("Selling " + aligators[day] + " aligator ticket(s) on day " + day + " for " + TICKET_SELL_PRICE);
+					}
+					
+					if (park[day] > 0){
+						Bid PABid = new Bid(parkAuction);
+						PABid.addBidPoint(-park[day], TICKET_SELL_PRICE);
+						masterAgent.agent.submitBid(PABid);
+						System.out.println("Selling " + park[day] + " park ticket(s) on day " + day + " for " + TICKET_SELL_PRICE);
+					}
+					
+					if (museum[day] > 0){
+						Bid MUBid = new Bid(museumAuction);
+						MUBid.addBidPoint(-museum[day], TICKET_SELL_PRICE);
+						masterAgent.agent.submitBid(MUBid);
+						System.out.println("Selling " + museum[day] + " museum ticket(s) on day " + day + " for " + TICKET_SELL_PRICE);
+					}
+				}
 	}
 
 	@Override
@@ -130,8 +165,6 @@ public class EntertainmentAgent extends SubAgent {
 		
 		
 			
-			
-			System.out.println("ddd");
 			
 		
 		System.out.println(aligators[0]);
@@ -178,132 +211,132 @@ public class EntertainmentAgent extends SubAgent {
 		}
 	}
 	
-	
-	// Looks up the currently held alligator tickets for the current day and assigns them to the highest "bidder" 
-	public void assignAlligatorTickets(int day){
+	// Looks up the currently held alligator tickets for the current day and assigns them to the highest "bidder"
+	public void assignAlligatorTickets(int day) {
 		// List to store interested clients and their respective values
 		List<ClientValuePair> aligatorInterest = new ArrayList<ClientValuePair>();
-		
+
 		// Find each customer that could use an alligator ticket that day
 		for (int ii = 0; ii < 9; ii++) {
 			if (ii < 8) {
 				Client client = masterAgent.clientList.get(ii);
 
 				// If the customer could use the ticket
-				if (	day >= client.arrivalDay && 
-						day < client.departureDay && 
-						client.aligatorWrestlingStatus == itemStatus.requested && 
-						client.museumDay != day && 
-						client.amusementParkDay != day )
-				{
+				if (day >= client.arrivalDay
+						&& day < client.departureDay
+						&& client.aligatorWrestlingStatus == itemStatus.requested
+						&& client.museumDay != day
+						&& client.amusementParkDay != day) {
 					// add that customer to the list
-					ClientValuePair newPoint = new ClientValuePair(client, client.aligatorWrestlingValue);
+					ClientValuePair newPoint = new ClientValuePair(client,
+							client.aligatorWrestlingValue);
 					aligatorInterest.add(newPoint);
 				}
 			} else {// Customer 8 is the open market
-				//TODO: Check current market price
+				// TODO: Check current market price
 			}
 		}
-		
+
 		// Sort the people with interest in the ticket, highest first
 		Collections.sort(aligatorInterest);
 		Collections.reverse(aligatorInterest);
-		
+
 		// Assign the tickets
 		int aligatorTicketsHeld = aligators[day];
 		int interestedParties = aligatorInterest.size();
 		for (int ii = 0; ii < Math.min(aligatorTicketsHeld, interestedParties); ii++) {
-
+			// If the client will pay more than the average ticket value, assign it to them
+			if (aligatorInterest.get(ii).client.amusementParkValue > ESTIMATED_CLOSE_PRICE) {
 				aligatorInterest.get(ii).client.aligatorWrestlingStatus = itemStatus.purchased;
 				aligatorInterest.get(ii).client.aligatorWrestlingDay = day;
 				aligators[day] -= 1;
-			
+			}
 		}
 	}
-	
-	// Looks up the currently held alligator tickets for the current day and assigns them to the highest "bidder" 
-		public void assignMuseumTickets(int day){
-			// LIst to store interested clients and their respective values
-			List<ClientValuePair> museumInterest = new ArrayList<ClientValuePair>();
-			
-			// Find each customer that could use an alligator ticket that day
-			for (int ii = 0; ii < 9; ii++) {
-				if (ii < 8) {
-					Client client = masterAgent.clientList.get(ii);
 
-					// If the customer could use the ticket
-					if (	day >= client.arrivalDay && 
-							day < client.departureDay && 
-							client.museumStatus == itemStatus.requested && 
-							client.aligatorWrestlingDay != day && 
-							client.amusementParkDay != day )
-					{
-						// add that customer to the list
-						ClientValuePair newPoint = new ClientValuePair(client, client.museumValue);
-						museumInterest.add(newPoint);
-					}
-				} else {// Customer 8 is the open market
-					//TODO: Check current market price
+	// Looks up the currently held alligator tickets for the current day and assigns them to the highest "bidder"
+	public void assignMuseumTickets(int day) {
+		// LIst to store interested clients and their respective values
+		List<ClientValuePair> museumInterest = new ArrayList<ClientValuePair>();
+
+		// Find each customer that could use an alligator ticket that day
+		for (int ii = 0; ii < 9; ii++) {
+			if (ii < 8) {
+				Client client = masterAgent.clientList.get(ii);
+
+				// If the customer could use the ticket
+				if (day >= client.arrivalDay && day < client.departureDay
+						&& client.museumStatus == itemStatus.requested
+						&& client.aligatorWrestlingDay != day
+						&& client.amusementParkDay != day) {
+					// add that customer to the list
+					ClientValuePair newPoint = new ClientValuePair(client,
+							client.museumValue);
+					museumInterest.add(newPoint);
 				}
+			} else {// Customer 8 is the open market
+				// TODO: Check current market price
 			}
-			
-			// Sort the people with interest in the ticket, highest first
-			Collections.sort(museumInterest);
-			Collections.reverse(museumInterest);
-			
-			// Assign the tickets
-			int museumTicketsHeld = museum[day];
-			int interestedParties = museumInterest.size();
-			for (int ii = 0; ii < Math.min(museumTicketsHeld, interestedParties); ii++) {
+		}
 
+		// Sort the people with interest in the ticket, highest first
+		Collections.sort(museumInterest);
+		Collections.reverse(museumInterest);
+
+		// Assign the tickets
+		int museumTicketsHeld = museum[day];
+		int interestedParties = museumInterest.size();
+		for (int ii = 0; ii < Math.min(museumTicketsHeld, interestedParties); ii++) {
+			// If the client will pay more than the average ticket value, assign
+			// it to them
+			if (museumInterest.get(ii).client.amusementParkValue > ESTIMATED_CLOSE_PRICE) {
 				museumInterest.get(ii).client.museumStatus = itemStatus.purchased;
-				museumInterest.get(ii).client.museumDay= day;
+				museumInterest.get(ii).client.museumDay = day;
 				museum[day] -= 1;
-				
 			}
 		}
-		
-		// Looks up the currently held amusement park tickets for the current day and assigns them to the highest "bidder" 
-		public void assignAmusementParkTickets(int day){
-			// LIst to store interested clients and their respective values
-			List<ClientValuePair> amusementParkInterest = new ArrayList<ClientValuePair>();
-			
-			// Find each customer that could use an alligator ticket that day
-			for (int ii = 0; ii < 9; ii++) {
-				if (ii < 8) {
-					Client client = masterAgent.clientList.get(ii);
+	}
 
-					// If the customer could use the ticket
-					if (	day >= client.arrivalDay && 
-							day < client.departureDay && 
-							client.amusementParkStatus == itemStatus.requested && 
-							client.museumDay != day && 
-							client.aligatorWrestlingDay != day )
-					{
-						// add that customer to the list
-						ClientValuePair newPoint = new ClientValuePair(client, client.museumValue);
-						amusementParkInterest.add(newPoint);
-					}
-				} else {// Customer 8 is the open market
-					//TODO: Check current market price
+	// Looks up the currently held amusement park tickets for the current day and assigns them to the highest "bidder"
+	public void assignAmusementParkTickets(int day) {
+		// LIst to store interested clients and their respective values
+		List<ClientValuePair> amusementParkInterest = new ArrayList<ClientValuePair>();
+
+		// Find each customer that could use an alligator ticket that day
+		for (int ii = 0; ii < 9; ii++) {
+			if (ii < 8) {
+				Client client = masterAgent.clientList.get(ii);
+
+				// If the customer could use the ticket
+				if (day >= client.arrivalDay && day < client.departureDay
+						&& client.amusementParkStatus == itemStatus.requested
+						&& client.museumDay != day
+						&& client.aligatorWrestlingDay != day) {
+					// add that customer to the list
+					ClientValuePair newPoint = new ClientValuePair(client,
+							client.museumValue);
+					amusementParkInterest.add(newPoint);
 				}
-			}
-			
-			// Sort the people with interest in the ticket, highest first
-			Collections.sort(amusementParkInterest);
-			Collections.reverse(amusementParkInterest);
-			
-			// Assign the tickets
-			int amusementParkTicketsHeld = park[day];
-			int interestedParties = amusementParkInterest.size();
-			for (int ii = 0; ii < Math.min(amusementParkTicketsHeld, interestedParties); ii++) {
-
-				amusementParkInterest.get(ii).client.amusementParkStatus = itemStatus.purchased;
-				amusementParkInterest.get(ii).client.amusementParkValue= day;
-				park[day] -= 1;
-				
+			} else {// Customer 8 is the open market
+				// TODO: Check current market price
 			}
 		}
-		
-		
+
+		// Sort the people with interest in the ticket, highest first
+		Collections.sort(amusementParkInterest);
+		Collections.reverse(amusementParkInterest);
+
+		// Assign the tickets
+		int amusementParkTicketsHeld = park[day];
+		int interestedParties = amusementParkInterest.size();
+		for (int ii = 0; ii < Math.min(amusementParkTicketsHeld, interestedParties); ii++) {
+			// If the client will pay more than the average ticket value, assign it to them
+			if (amusementParkInterest.get(ii).client.amusementParkValue > ESTIMATED_CLOSE_PRICE) {
+				amusementParkInterest.get(ii).client.amusementParkStatus = itemStatus.purchased;
+				amusementParkInterest.get(ii).client.amusementParkDay = day;
+				park[day] -= 1;
+			}
+		}
+	}
+
 }
