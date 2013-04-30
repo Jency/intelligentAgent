@@ -83,8 +83,11 @@ public class MasterAgent extends AgentImpl{
 
 	@Override
 	public void gameStopped() {
-		// TODO Auto-generated method stub
-		
+		clientList = new ArrayList<Client>();
+		flightAgent.stop();
+		hotelAgent.stop();
+		entertainmentAgent.stop();
+			
 	}
 
 	@Override
