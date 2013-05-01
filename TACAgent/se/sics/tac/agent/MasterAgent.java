@@ -4,6 +4,7 @@ import java.util.*;
 import se.sics.tac.aw.AgentImpl;
 import se.sics.tac.aw.Bid;
 import se.sics.tac.aw.TACAgent;
+import se.sics.tac.aw.Transaction;
 import se.sics.tac.datastructures.*;
 import se.sics.tac.util.ArgEnumerator;
 
@@ -26,20 +27,30 @@ public class MasterAgent extends AgentImpl{
 
 	@Override
 	public void bidUpdated(Bid bid) {
-		// TODO Auto-generated method stub
-		
+		// If the updated bid is an entertainment bid
+		if (TACAgent.getAuctionCategory(bid.getAuction()) == 2){
+			entertainmentAgent.bidUpdated(bid);	
+		}
 	}
 
 	@Override
 	public void bidRejected(Bid bid) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("*********REJECTED BID*****************");
 	}
 
 	@Override
 	public void bidError(Bid bid, int error) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("*********BID ERROR*****************");
+	}
+	
+	@Override
+	public void transaction(Transaction transaction){
+		// If this is an entertainment transaction
+		if ( TACAgent.getAuctionCategory(transaction.getAuction()) == 2){
+			entertainmentAgent.transaction(transaction);
+		}
 	}
 
 	@Override
