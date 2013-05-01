@@ -65,7 +65,7 @@ public class MasterAgent extends AgentImpl{
 		
 		hotelAgent = new HotelAgent();
 		hotelAgent.masterAgent = this;
-		flightAgent.initialise();
+		hotelAgent.initialise();
 		
 		entertainmentAgent = new EntertainmentAgent();
 		entertainmentAgent.masterAgent = this;
@@ -83,8 +83,11 @@ public class MasterAgent extends AgentImpl{
 
 	@Override
 	public void gameStopped() {
-		// TODO Auto-generated method stub
-		
+		clientList = new ArrayList<Client>();
+		flightAgent.stop();
+		hotelAgent.stop();
+		entertainmentAgent.stop();
+			
 	}
 
 	@Override

@@ -7,8 +7,15 @@ import se.sics.tac.aw.*;
 import se.sics.tac.util.*;
 import se.sics.tac.util.ArgEnumerator;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.Semaphore;
+
+import javax.swing.Timer;
 
 public class FlightAgent extends SubAgent {
+	Semaphore timingSemaphore;
+	int FREQUENCY = 10; // How often to repeat the main loop in seconds
 	
 float[] price= new float [50];
 	float bidPrice = 250f;	
@@ -74,6 +81,24 @@ float[] price= new float [50];
 
 	@Override
 	public void run() {
+
+		// Set up the delay timer 
+		int delay = 1000 * FREQUENCY;
+		timingSemaphore = new Semaphore(1);
+		ActionListener taskPerformer = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				timingSemaphore.release();
+			}
+		};
+		new Timer(delay, taskPerformer).start();
+
+		while (true) {
+			try {
+				timingSemaphore.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
 		for (int day=1; day<=4; day++)
 		{
 			int inFlightAuctionNo = TACAgent.getAuctionFor(TACAgent.CAT_FLIGHT, TACAgent.TYPE_INFLIGHT, day);
@@ -117,8 +142,9 @@ float[] price= new float [50];
 				b.addBidPoint(ticketsReqOut, price[outFlightAuctionNo]);
 				masterAgent.agent.submitBid(b);
 			}
+			
 		}
 		
 	}// run() end
-
+	}
 }// FlightAgent() end
