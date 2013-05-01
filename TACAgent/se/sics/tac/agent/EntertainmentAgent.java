@@ -1,15 +1,25 @@
 package se.sics.tac.agent;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
+
+import javax.swing.Timer;
+
 import se.sics.tac.aw.Bid;
+import se.sics.tac.aw.Quote;
 import se.sics.tac.aw.TACAgent;
 import se.sics.tac.datastructures.*;
 import se.sics.tac.datastructures.Client.*;
 import sun.java2d.loops.CustomComponent;
 
 public class EntertainmentAgent extends SubAgent {
+	Semaphore timingSemaphore;
+	int FREQUENCY = 1; // How often to repeat the main loop in seconds
+	
 	int[] aligators = new int[5];
 	int[] museum = new int[5];
 	int[] park = new int[5];
@@ -151,48 +161,155 @@ public class EntertainmentAgent extends SubAgent {
 
 	@Override
 	public void run() {
-		//while (true){
-		
-		
-		
-		
-		
-		// TODO: Put in bids for wanted tickets
-		
-		// TODO: Sell useless tickets
-		
-		
-		
-		
-			
-			
-		
-		System.out.println(aligators[0]);
-		System.out.println();
+		// Set up the delay timer 
+		int delay = 1000 * FREQUENCY;
+		timingSemaphore = new Semaphore(1);
+		ActionListener taskPerformer = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				timingSemaphore.release();
+			}
+		};
+		new Timer(delay, taskPerformer).start();
 
-		// Subtract the required tickets from the assignment
-		for (int i = 0; i < 8; i++) {
-			// masterAgent.clientList.get(i).
-
+		while (true) {
+			try {
+				timingSemaphore.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			doWork();
 		}
-
-		// int auctionn = ;
-		// int own = masterAgent.agent.getOwn(
-
-		int m4 = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT,TACAgent.TYPE_MUSEUM, 4);
-
-		Bid test = new Bid(m4);
-		// Bid test = masterAgent.agent.getBid(m4);
-		test.addBidPoint(-1, 1);
-
-		// masterAgent.agent.submitBid(test);
-
-		Bid test2 = new Bid(test);
-		test2.addBidPoint(-1, 5);
-		// masterAgent.agent.replaceBid(test, test2);
 	}
-	// }
 
+	private void doWork() {
+
+		// System.out.println("Doig work");
+		// Re-evaluate the entertainment allocation
+
+		// For each client
+		for (Client client : masterAgent.clientList) {
+			// If this client has an aligator ticket
+			if (client.aligatorWrestlingStatus == itemStatus.purchased) {
+				// Get the current market price for that ticket
+				int auctionID = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_ALLIGATOR_WRESTLING, client.aligatorWrestlingDay);
+				Quote marketPriceQuote = new Quote(auctionID);
+				float marketPrice = marketPriceQuote.getAskPrice();
+
+				// If there is more than 1 minute left in the game & market price is above ESTIMATED_CLOSE_PRICE OR there is less than 1 minute in the game 
+				if ((masterAgent.agent.getGameTimeLeft() / 1000 > 60) && (marketPrice > ESTIMATED_CLOSE_PRICE)  || (masterAgent.agent.getGameTimeLeft() / 1000 >= 60)) {					
+					// If the market price is higher than the client bonus AND
+					// is higher than the estimated closing price
+					if (marketPrice > client.aligatorWrestlingValue && marketPrice > ESTIMATED_CLOSE_PRICE) {
+						// Sell the ticket
+						Bid bid = new Bid(auctionID);
+						bid.addBidPoint(-1, marketPrice);
+						client.aligatorWrestlingStatus = itemStatus.requested;
+
+						// Put out a bid at the client's price (minus profit
+						// margin), just in case one becomes available
+						bid.addBidPoint(1, client.aligatorWrestlingValue * PURCHASE_PROFIT_MARGIN);
+						client.aligatorWrestlingStatus = itemStatus.bidding;
+						masterAgent.agent.submitBid(bid);
+
+						System.out.println("Ruthlessly sold a client's aligator wresting ticket on day " + client.aligatorWrestlingDay + " for " + marketPrice + " as the client only offered " + client.aligatorWrestlingValue);
+						System.out.println("Also put out another bid for that ticket at " + client.aligatorWrestlingValue * PURCHASE_PROFIT_MARGIN + "just in case");
+					} else {
+						//System.out.println("No sneaky sales to be made");
+					}
+				}
+
+				// If this client has a park ticket
+				if (client.amusementParkStatus == itemStatus.purchased) {
+					// Get the current market price for that ticket
+					int parkAuctionID = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_AMUSEMENT, client.amusementParkDay);
+					Quote parkMarketPriceQuote = new Quote(parkAuctionID);
+					float parkMarketPrice = parkMarketPriceQuote.getAskPrice();
+
+					// If there is more than 1 minute left in the game & market price is above ESTIMATED_CLOSE_PRICE OR there is less than 1 minute in the game 
+					if ((masterAgent.agent.getGameTimeLeft() / 1000 > 60) && (parkMarketPrice > ESTIMATED_CLOSE_PRICE)  || (masterAgent.agent.getGameTimeLeft() / 1000 >= 60)) {
+						// If the market price is higher than the client bonus
+						// AND is higher than the estimated closing price
+						if (parkMarketPrice > client.amusementParkValue) {
+							// Sell the ticket
+							Bid bid = new Bid(parkAuctionID);
+							bid.addBidPoint(-1, parkMarketPrice);
+							client.amusementParkStatus = itemStatus.requested;
+
+							// Put out a bid at the client's price (minus profit margin), just in case one becomes available
+							bid.addBidPoint(1, client.amusementParkValue * PURCHASE_PROFIT_MARGIN);
+							client.amusementParkStatus = itemStatus.bidding;
+							masterAgent.agent.submitBid(bid);
+
+							System.out.println("Ruthlessly sold a client's park wresting ticket on day " + client.amusementParkDay + " for " + parkMarketPrice + " as the client only offered " + client.amusementParkValue);
+							System.out.println("Also put out another bid for that ticket at " + client.amusementParkValue * PURCHASE_PROFIT_MARGIN + "just in case");
+						} else {
+							//System.out.println("No sneaky sales to be made");
+						}
+					} else {
+						System.out.println("Less than a minute left");
+						// Sell the ticket
+					}
+
+					// If this client has a museum ticket
+					if (client.museumStatus == itemStatus.purchased) {
+						// Get the current market price for that ticket
+						int museumAuctionID = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_MUSEUM, client.amusementParkDay);
+						Quote museumMarketPriceQuote = new Quote(museumAuctionID);
+						float museumMarketPrice = museumMarketPriceQuote.getAskPrice();
+
+						// If there is more than 1 minute left in the game & market price is above ESTIMATED_CLOSE_PRICE OR there is less than 1 minute in the game 
+						if ((masterAgent.agent.getGameTimeLeft() / 1000 > 60) && (museumMarketPrice > ESTIMATED_CLOSE_PRICE)  || (masterAgent.agent.getGameTimeLeft() / 1000 >= 60)) {
+							// If the market price is higher than the client
+							// bonus AND is higher than the estimated closing
+							// price
+							if (museumMarketPrice > client.amusementParkValue) {
+								// Sell the ticket
+								Bid bid = new Bid(museumAuctionID);
+								bid.addBidPoint(-1, museumMarketPrice);
+								client.amusementParkStatus = itemStatus.requested;
+
+								// Put out a bid at the client's price (minus
+								// profit margin), just in case one becomes
+								// available
+								bid.addBidPoint(1, client.amusementParkValue * PURCHASE_PROFIT_MARGIN);
+								client.amusementParkStatus = itemStatus.bidding;
+								masterAgent.agent.submitBid(bid);
+
+								System.out.println("Ruthlessly sold a client's museum wresting ticket on day " + client.amusementParkDay + " for " + museumMarketPrice + " as the client only offered " + client.amusementParkValue);
+								System.out.println("Also put out another bid for that ticket at " + client.amusementParkValue * PURCHASE_PROFIT_MARGIN + "just in case");
+							} else {
+								//System.out.println("No sneaky sales to be made");
+							}
+						} else {
+							System.out.println("Less than a minute left");
+							// Sell the ticket
+						}
+					}
+				}
+			}
+//			System.out.println("Tried to make sneaky sales. Values are");
+//		System.out.println("Cust : Market");
+//		System.out.println(client.aligatorWrestlingValue +" - Aligator");
+//		System.out.println(client.amusementParkValue +" - Park");
+//		System.out.println(client.museumValue +" - museum");
+		}
+		
+	}
+
+			// Compare the price the client offers with the market price
+			// If the market price is higher AND is is above AVERAGE_CLOSE_PRICE
+				// Sell the ticket
+				// Put out a bid at the client's price (minus profit margin), just in case one becomes avaliable
+		// else
+			// Compare the price of the client with the market price
+			// If the market price is higher
+				// Sell the ticket
+				//
+		
+	public void bidUpdated(Bid bid) {
+		//System.out.println("Updated bid :" + bid.getBidString());
+	}
+	
 	// Rationalise the customers entertainment interests. Eg if a customer is staying 1 day, show that they are only interested in the entertainment type of highest value 
 	public void rationaliseCustomerInterest(){
 		for (Client client : masterAgent.clientList){ // For each customer
@@ -201,6 +318,7 @@ public class EntertainmentAgent extends SubAgent {
 				if (client.aligatorWrestlingValue > client.amusementParkValue) {client.amusementParkStatus = itemStatus.failed;} else {client.aligatorWrestlingStatus = itemStatus.failed;}
 				if (client.amusementParkValue > client.museumValue) {client.museumStatus = itemStatus.failed;} else {client.amusementParkStatus = itemStatus.failed;}
 				if (client.aligatorWrestlingValue > client.museumValue) {client.museumStatus = itemStatus.failed;} else {client.aligatorWrestlingStatus = itemStatus.failed;}
+				client.arrivalDayStatus = itemStatus.fresh;
 			}
 			else if ((client.departureDay - client.arrivalDay) == 2){ // If they'll be here for two nights
 				// Clear the lowest value entertainment type (If both the other items are bigger than you, you are the smallest)
@@ -275,7 +393,9 @@ public class EntertainmentAgent extends SubAgent {
 					museumInterest.add(newPoint);
 				}
 			} else {// Customer 8 is the open market
-				// TODO: Check current market price
+				int auctionID = TACAgent.getAuctionFor(TACAgent.CAT_ENTERTAINMENT, TACAgent.TYPE_MUSEUM, day);
+				Quote currentPriceQuote = new Quote(auctionID); 
+				currentPriceQuote.getAskPrice();
 			}
 		}
 

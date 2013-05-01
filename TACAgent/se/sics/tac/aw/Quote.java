@@ -47,8 +47,7 @@ public class Quote {
   private float bidPrice;
   private Bid bid;
 
-  public Quote(int auctionNo) 
-  {
+  public Quote(int auctionNo) {
     auction = auctionNo;
   }
 
