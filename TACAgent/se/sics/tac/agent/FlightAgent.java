@@ -1,11 +1,11 @@
 package se.sics.tac.agent;
 import java.util.*;
 import se.sics.tac.aw.Quote;
+import se.sics.tac.aw.Bid;
 import se.sics.tac.datastructures.*;
-import se.sics.tac.datastructures.Client.*;
 import se.sics.tac.aw.*;
-import se.sics.tac.util.*;
-import se.sics.tac.util.ArgEnumerator;
+
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,12 +18,9 @@ public class FlightAgent extends SubAgent {
 	int FREQUENCY = 10; // How often to repeat the main loop in seconds
 	
 float[] price= new float [50];
-	float bidPrice = 250f;	
+//	float bidPrice = 0.2f;	
 	
-//	int auct;
-//	protected void init(ArgEnumerator args) {
-//	    price = new float[TACAgent.getAuctionNo()];
-//	  }
+
 		
 		
 	@Override
@@ -52,7 +49,7 @@ float[] price= new float [50];
 			 if((numberOfTickets-ownTickets)>0)
 			    {
 				// bid.addBidPoint((numberOfTickets-ownTickets), currentPrice + 50);
-				 bid.addBidPoint((numberOfTickets-ownTickets), 300);
+				 bid.addBidPoint((numberOfTickets-ownTickets), 150);
 			    }
 			//bid.addBidPoint(numberOfTickets, currentPrice + 50);
 			
@@ -70,7 +67,7 @@ float[] price= new float [50];
 		    if((numberOfTickets-ownTickets)>0)
 		    {
 				//bid.addBidPoint((numberOfTickets-ownTickets), currentPrice + 50);
-		    	bid.addBidPoint((numberOfTickets-ownTickets), 300);
+		    	bid.addBidPoint((numberOfTickets-ownTickets), 150);
 		    }
 			masterAgent.agent.submitBid(bid);
 			System.out.println("Bidded for outflight on day " + day + " " + numberOfTickets + " times");
@@ -113,11 +110,31 @@ float[] price= new float [50];
 			if(ticketsReqIn >0)
 			{
 				Bid b = new Bid(inFlightAuctionNo);
-				if ((lastBidPrice-currentPrice)<=0)
+				if ((lastBidPrice-currentPrice)<0)
 				{
-					price[inFlightAuctionNo] = currentPrice+50;
+					price[inFlightAuctionNo] = currentPrice+10;
+				//	if(price[inFlightAuctionNo]<270)
+				//	{
+				//		if(currentPrice<270)
+				//		{price[inFlightAuctionNo] = currentPrice;}
+						
+				//	}
+				//	else if (price[inFlightAuctionNo]<370 && price[inFlightAuctionNo]>= 270)
+				//	{
+				//		if(<currentPrice<370)
+				//		{price[inFlightAuctionNo] = currentPrice;}
+				//	}
 				}
-				else {price[inFlightAuctionNo] = currentPrice;}
+				else if ((lastBidPrice-currentPrice)>0) 
+				{
+					price[inFlightAuctionNo] = currentPrice-5;
+				//	if(price[inFlightAuctionNo]<370)
+				//	{
+						
+				//	}
+				}
+				else
+				{price[inFlightAuctionNo] = currentPrice;}
 				b.addBidPoint(ticketsReqIn, price[inFlightAuctionNo]);
 				masterAgent.agent.submitBid(b);
 			}
@@ -128,15 +145,19 @@ float[] price= new float [50];
 			int numberOfTicketsOut = masterAgent.agent.getAllocation(outFlightAuctionNo);
 		    int ownTicketsOut= masterAgent.agent.getOwn(outFlightAuctionNo);
 		    int ticketsReqOut = numberOfTicketsOut - ownTicketsOut;
-		    Quote quote = new Quote(outFlightAuctionNo);
+		    Quote quote = masterAgent.agent.getQuote(outFlightAuctionNo);
 			float currentPrice = quote.getAskPrice();
 			float lastBidPrice = quote.getBidPrice();
 			if(ticketsReqOut >0)
 			{
 				Bid b = new Bid(outFlightAuctionNo);
-				if ((lastBidPrice-currentPrice)<=0)
+				if ((lastBidPrice-currentPrice)<0)
 				{
-					price[outFlightAuctionNo] = currentPrice+50;
+					price[outFlightAuctionNo] = currentPrice+10;
+				}
+				else if ((lastBidPrice-currentPrice)>0) 
+				{
+					price[outFlightAuctionNo] = currentPrice-5;
 				}
 				else {price[outFlightAuctionNo] = currentPrice;}
 				b.addBidPoint(ticketsReqOut, price[outFlightAuctionNo]);
@@ -145,6 +166,7 @@ float[] price= new float [50];
 			
 		}
 		
-	}// run() end
-	}
+	}// while() 
+	}// run() 
+	
 }// FlightAgent() end
