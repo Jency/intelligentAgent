@@ -35,14 +35,16 @@ public class MasterAgent extends AgentImpl{
 
 	@Override
 	public void bidRejected(Bid bid) {
-		// TODO Auto-generated method stub
-		System.out.println("*********REJECTED BID*****************");
+		System.out.println("*********REJECTED BID*********");
+		System.out.println("Type : " + TACAgent.getAuctionTypeAsString(bid.getAuction()));
+		System.out.println("Reason : " + bid.getRejectReasonAsString());
+		System.out.println("******************************");
 	}
 
 	@Override
 	public void bidError(Bid bid, int error) {
-		// TODO Auto-generated method stub
-		System.out.println("*********BID ERROR*****************");
+		System.out.println("*********BID ERROR************");
+
 	}
 	
 	@Override
