@@ -49,7 +49,7 @@ float[] price= new float [50];
 			 if((numberOfTickets-ownTickets)>0)
 			    {
 				// bid.addBidPoint((numberOfTickets-ownTickets), currentPrice + 50);
-				 bid.addBidPoint((numberOfTickets-ownTickets), 150);
+				 bid.addBidPoint((numberOfTickets-ownTickets), 300);
 			    }
 			//bid.addBidPoint(numberOfTickets, currentPrice + 50);
 			
@@ -67,7 +67,7 @@ float[] price= new float [50];
 		    if((numberOfTickets-ownTickets)>0)
 		    {
 				//bid.addBidPoint((numberOfTickets-ownTickets), currentPrice + 50);
-		    	bid.addBidPoint((numberOfTickets-ownTickets), 150);
+		    	bid.addBidPoint((numberOfTickets-ownTickets), 300);
 		    }
 			masterAgent.agent.submitBid(bid);
 			System.out.println("Bidded for outflight on day " + day + " " + numberOfTickets + " times");
@@ -106,37 +106,42 @@ float[] price= new float [50];
 			Quote quote = masterAgent.agent.getQuote(inFlightAuctionNo);
 			
 			float currentPrice = quote.getAskPrice();
-			float lastBidPrice = quote.getBidPrice();
+			
+		//	float lastBidPrice = quote.getBidPrice();
 			if(ticketsReqIn >0)
 			{
 				Bid b = new Bid(inFlightAuctionNo);
-				if ((lastBidPrice-currentPrice)<0)
-				{
-					price[inFlightAuctionNo] = currentPrice+10;
-				//	if(price[inFlightAuctionNo]<270)
-				//	{
-				//		if(currentPrice<270)
-				//		{price[inFlightAuctionNo] = currentPrice;}
-						
-				//	}
-				//	else if (price[inFlightAuctionNo]<370 && price[inFlightAuctionNo]>= 270)
-				//	{
-				//		if(<currentPrice<370)
-				//		{price[inFlightAuctionNo] = currentPrice;}
-				//	}
+				
+			////	if ((lastBidPrice-currentPrice)<0)
+			//	{
+					price[inFlightAuctionNo] = currentPrice+5;
+				
+			//	}
+			//	else if ((lastBidPrice-currentPrice)>0) 
+			//	{
+			//		price[inFlightAuctionNo] = currentPrice-5;
+				
+			//	}
+			//	else
+			//	{price[inFlightAuctionNo] = currentPrice;}
+				
+				b.addBidPoint(ticketsReqIn, price[inFlightAuctionNo]);
+			//	masterAgent.agent.submitBid(b);
+				if (quote.getBid() == null){
+					System.out.println("NULL BID");
 				}
-				else if ((lastBidPrice-currentPrice)>0) 
+				masterAgent.agent.replaceBid(quote.getBid(), b);
+				String time = masterAgent.agent.getGameTimeLeftAsString();
+				
+				if (Integer.parseInt(time) <= 60)
 				{
-					price[inFlightAuctionNo] = currentPrice-5;
-				//	if(price[inFlightAuctionNo]<370)
-				//	{
-						
-				//	}
+					b.addBidPoint(ticketsReqIn, currentPrice);
+					masterAgent.agent.submitBid(b);
 				}
 				else
-				{price[inFlightAuctionNo] = currentPrice;}
-				b.addBidPoint(ticketsReqIn, price[inFlightAuctionNo]);
-				masterAgent.agent.submitBid(b);
+				{
+					masterAgent.agent.replaceBid(quote.getBid(), b);
+				}
 			}
 		}
 		for (int day=2; day<=5; day++)
@@ -147,13 +152,14 @@ float[] price= new float [50];
 		    int ticketsReqOut = numberOfTicketsOut - ownTicketsOut;
 		    Quote quote = masterAgent.agent.getQuote(outFlightAuctionNo);
 			float currentPrice = quote.getAskPrice();
+			
 			float lastBidPrice = quote.getBidPrice();
 			if(ticketsReqOut >0)
 			{
 				Bid b = new Bid(outFlightAuctionNo);
 				if ((lastBidPrice-currentPrice)<0)
 				{
-					price[outFlightAuctionNo] = currentPrice+10;
+					price[outFlightAuctionNo] = currentPrice+5;
 				}
 				else if ((lastBidPrice-currentPrice)>0) 
 				{
@@ -161,7 +167,8 @@ float[] price= new float [50];
 				}
 				else {price[outFlightAuctionNo] = currentPrice;}
 				b.addBidPoint(ticketsReqOut, price[outFlightAuctionNo]);
-				masterAgent.agent.submitBid(b);
+			//	masterAgent.agent.submitBid(b);
+			masterAgent.agent.replaceBid(quote.getBid(), b);
 			}
 			
 		}
