@@ -194,24 +194,17 @@ public class EntertainmentAgent extends SubAgent {
 			try {
 				timingSemaphore.acquire();
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Entertainment agent exited");
 			}
 			doWork();
 		}
 	}
 
 	private void doWork() {
-
-		// System.out.println("Doing work");
-		// Re-evaluate the entertainment allocation
-
-		System.out.println("************************");
-		// For each client
+		
+		//Section: Re-evaluate the ticket assignment
 		for (Client client : masterAgent.clientList) {
 
-			System.out.println();
-			System.out.println("For client " + masterAgent.clientList.indexOf(client) + ":");			
-			
 			// If this client has an aligator ticket
 			if (client.aligatorWrestlingStatus == itemStatus.purchased) {
 				// Get the current market price for that ticket
@@ -219,7 +212,6 @@ public class EntertainmentAgent extends SubAgent {
 				Quote marketPriceQuote = masterAgent.agent.getQuote(auctionID);
 				float marketPrice = marketPriceQuote.getBidPrice();
 				
-				System.out.println(client.aligatorWrestlingValue + " : " + marketPrice + " - Aligatgors");
 				
 				// If there is more than 1 minute left in the game & market price is above ESTIMATED_CLOSE_PRICE OR there is less than 1 minute in the game 
 				if ((masterAgent.agent.getGameTimeLeft() / 1000 > 60) && (marketPrice > ESTIMATED_CLOSE_PRICE)  || (masterAgent.agent.getGameTimeLeft() / 1000 >= 60)) {					
@@ -227,7 +219,12 @@ public class EntertainmentAgent extends SubAgent {
 					// is higher than the estimated closing price
 					if (marketPrice > client.aligatorWrestlingValue && marketPrice > ESTIMATED_CLOSE_PRICE) {
 						// Sell the ticket
-						Bid bid = new Bid(auctionID);
+						Bid bid;
+						if (marketPriceQuote.getBid() != null){
+							bid = new Bid(marketPriceQuote.getBid());
+						} else{
+							bid = new Bid(auctionID);
+						}
 						bid.addBidPoint(-1, marketPrice);
 						client.aligatorWrestlingStatus = itemStatus.requested;
 
@@ -242,8 +239,6 @@ public class EntertainmentAgent extends SubAgent {
 
 						System.out.println("Ruthlessly sold a client's aligator wresting ticket on day " + client.aligatorWrestlingDay + " for " + marketPrice + " as the client only offered " + client.aligatorWrestlingValue);
 						System.out.println("Also put out another bid for that ticket at " + client.aligatorWrestlingValue * PURCHASE_PROFIT_MARGIN + "just in case");
-					} else {
-						//System.out.println("No sneaky sales to be made");
 					}
 				}
 			}	
@@ -255,7 +250,6 @@ public class EntertainmentAgent extends SubAgent {
 				Quote parkMarketPriceQuote = masterAgent.agent.getQuote(parkAuctionID);
 				float parkMarketPrice = parkMarketPriceQuote.getAskPrice();
 					
-				System.out.println(client.amusementParkValue+ " : " + parkMarketPrice + " - Park");
 					
 				// If there is more than 1 minute left in the game & market price is above ESTIMATED_CLOSE_PRICE OR there is less than 1 minute in the game 
 				if ((masterAgent.agent.getGameTimeLeft() / 1000 > 60) && (parkMarketPrice > ESTIMATED_CLOSE_PRICE)  || (masterAgent.agent.getGameTimeLeft() / 1000 >= 60)) {
@@ -263,7 +257,12 @@ public class EntertainmentAgent extends SubAgent {
 					// AND is higher than the estimated closing price
 					if (parkMarketPrice > client.amusementParkValue) {
 						// Sell the ticket
-						Bid bid = new Bid(parkAuctionID);
+						Bid bid;
+						if (parkMarketPriceQuote.getBid() != null){
+							bid = new Bid(parkMarketPriceQuote.getBid());
+						} else{
+							bid = new Bid(parkAuctionID);
+						}
 						bid.addBidPoint(-1, parkMarketPrice);
 						client.amusementParkStatus = itemStatus.requested;
 
@@ -274,14 +273,9 @@ public class EntertainmentAgent extends SubAgent {
 						bidlist.add(bid);
 						transactionDirection[parkAuctionID] = true;
 
-						System.out.println("Ruthlessly sold a client's park wresting ticket on day " + client.amusementParkDay + " for " + parkMarketPrice + " as the client only offered " + client.amusementParkValue);
+						System.out.println("Ruthlessly sold a client's park ticket on day " + client.amusementParkDay + " for " + parkMarketPrice + " as the client only offered " + client.amusementParkValue);
 						System.out.println("Also put out another bid for that ticket at " + client.amusementParkValue * PURCHASE_PROFIT_MARGIN + "just in case");
-					} else {
-						//System.out.println("No sneaky sales to be made");
 					}
-				} else {
-					System.out.println("Less than a minute left");
-					// Sell the ticket
 				}
 			}
 			
@@ -293,9 +287,6 @@ public class EntertainmentAgent extends SubAgent {
 				float museumMarketPrice = museumMarketPriceQuote.getAskPrice();
 
 				
-				System.out.println(client.museumValue + " : " + museumMarketPrice + " - Museum");
-					
-						
 				// If there is more than 1 minute left in the game & market price is above ESTIMATED_CLOSE_PRICE OR there is less than 1 minute in the game 
 				if ((masterAgent.agent.getGameTimeLeft() / 1000 > 60) && (museumMarketPrice > ESTIMATED_CLOSE_PRICE)  || (masterAgent.agent.getGameTimeLeft() / 1000 >= 60)) {
 					// If the market price is higher than the client
@@ -303,7 +294,12 @@ public class EntertainmentAgent extends SubAgent {
 					// price
 					if (museumMarketPrice > client.museumValue) {
 						// Sell the ticket
-						Bid bid = new Bid(museumAuctionID);
+						Bid bid;
+						if (museumMarketPriceQuote.getBid() != null){
+							bid = new Bid(museumMarketPriceQuote.getBid());
+						} else{
+							bid = new Bid(museumAuctionID);
+						}
 						bid.addBidPoint(-1, museumMarketPrice);
 						client.museumStatus = itemStatus.requested;
 
@@ -318,12 +314,7 @@ public class EntertainmentAgent extends SubAgent {
 
 						System.out.println("Ruthlessly sold a client's museum wresting ticket on day " + client.museumDay + " for " + museumMarketPrice + " as the client only offered " + client.museumValue);
 						System.out.println("Also put out another bid for that ticket at " + client.museumValue * PURCHASE_PROFIT_MARGIN + "just in case");
-					} else {
-						//System.out.println("No sneaky sales to be made");
 					}
-				} else {
-					System.out.println("Less than a minute left");
-					// Sell the ticket
 				}
 			}
 
@@ -334,7 +325,6 @@ public class EntertainmentAgent extends SubAgent {
 //			System.out.println(client.museumValue + " - museum");
 
 		}
-		System.out.println("************************");
 	}
 
 	
