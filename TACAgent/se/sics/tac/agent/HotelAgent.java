@@ -13,17 +13,28 @@ import se.sics.tac.datastructures.Client.hotelType;
 
 public class HotelAgent extends SubAgent {
 	Semaphore timingSemaphore;
-	int FREQUENCY = 1; // How often to repeat the main loop in seconds
+	int FREQUENCY = 60; // How often to repeat the main loop in seconds
 	
 	Bid[] expensiveHotelBids = new Bid[5];
 	Bid[] cheapHotelBids = new Bid[5];
-	static int HOTEL_BUDGET = 200;
+	static int HOTEL_BUDGET = 600;
 
 	@Override
 	public void initialise() 
 	{	
 		
 		
+		for (int client = 0; client < 8; client++ )
+		{
+			int arrival = masterAgent.agent.getClientPreference(client, TACAgent.ARRIVAL);
+			int departure = masterAgent.agent.getClientPreference(client, TACAgent.DEPARTURE);
+				
+			int cheapAuctionNo = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_CHEAP_HOTEL, arrival);
+			int goodAuctionNo = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_GOOD_HOTEL, departure);
+			
+			masterAgent.agent.setAllocation(cheapAuctionNo, masterAgent.agent.getAllocation(cheapAuctionNo)+1);
+			masterAgent.agent.setAllocation(goodAuctionNo, masterAgent.agent.getAllocation(goodAuctionNo)+1);
+		}
 		// Initialize the bid arrays
 		for (int i = 1 ; i <= 4; i++)
 		{
@@ -163,7 +174,7 @@ public class HotelAgent extends SubAgent {
 				e.printStackTrace();
 			}
 			
-			
+			System.out.println("run loop");
 			// Program logic here
 			// Bid the price and Assign type of hotel to the customer
 			for (int i = 0; i < 8 ; i++)
@@ -192,7 +203,9 @@ public class HotelAgent extends SubAgent {
 						//auctionID = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_GOOD_HOTEL, j);
 						// calculate the price per room for this customer (add the hotel bonus if booking expensive hotel)
 						float budgetPerNight = (HOTEL_BUDGET + client.hotelvalue) / (client.departureDay - client.arrivalDay);
-						expensiveHotelBids[j].addBidPoint(1, budgetPerNight);
+						Bid bidToAdd = new Bid(expensiveHotelBids[j]);
+						bidToAdd.addBidPoint(1, budgetPerNight);
+						expensiveHotelBids[j] = bidToAdd;
 						System.out.println("Submitted bid for expensive hotel on day " + j);
 					}
 					else 
@@ -200,7 +213,9 @@ public class HotelAgent extends SubAgent {
 						//auctionID = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_CHEAP_HOTEL, j);
 						// calculate the price per room for this customer
 						float budgetPerNight = HOTEL_BUDGET / (client.departureDay - client.arrivalDay);
-						cheapHotelBids[j].addBidPoint(1, budgetPerNight);
+						Bid bidToAdd = new Bid(cheapHotelBids[j]);
+						bidToAdd.addBidPoint(1, budgetPerNight);
+						cheapHotelBids[j] = bidToAdd;
 						System.out.println("Submitted bid for cheap hotel on day " + j);
 					}
 				}
