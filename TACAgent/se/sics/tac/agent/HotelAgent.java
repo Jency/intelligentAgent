@@ -36,55 +36,7 @@ public class HotelAgent extends SubAgent {
 			cheapHotelBids[i] = cheapBid;
 		}
 		
-		// Bid the price and Assign type of hotel to the customer
-		for (int i = 0; i < 8 ; i++)
-		{
-			Client client = masterAgent.clientList.get(i);
-			int hotelval = masterAgent.agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
 		
-		// If customer's value is more than 70, we will try to buy expensive hotel rooms			
-			if (hotelval > 70)
-			{
-				client.hotelAssignment = hotelType.expensiveHotel;
-				System.out.println("Expensive hotel requested by client"+ i);
-			}
-			else
-			{
-				client.hotelAssignment = hotelType.cheapHotel;
-				System.out.println("Cheap hotel requested by client"+ i);
-			}	
-						
-			// Assign Hotel for each night
-			for (int j = client.arrivalDay; j < client.departureDay; j++)
-			{
-				//int auctionID;
-				if (client.hotelAssignment == hotelType.expensiveHotel)
-				{
-					//auctionID = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_GOOD_HOTEL, j);
-					// calculate the price per room for this customer (add the hotel bonus if booking expensive hotel)
-					float budgetPerNight = (HOTEL_BUDGET + client.hotelvalue) / (client.departureDay - client.arrivalDay);
-					expensiveHotelBids[j].addBidPoint(1, budgetPerNight);
-					System.out.println("Submitted bid for expensive hotel on day " + j);
-				}
-				else 
-				{
-					//auctionID = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_CHEAP_HOTEL, j);
-					// calculate the price per room for this customer
-					float budgetPerNight = HOTEL_BUDGET / (client.departureDay - client.arrivalDay);
-					cheapHotelBids[j].addBidPoint(1, budgetPerNight);
-					System.out.println("Submitted bid for cheap hotel on day " + j);
-				}
-			}
-		}
-		
-		// Submit the completed bids
-		for (int i = 1 ; i <= 4; i++)
-		{
-			masterAgent.agent.submitBid(expensiveHotelBids[i]);
-			masterAgent.agent.submitBid(cheapHotelBids[i]);
-//			System.out.println(expensiveHotelBids[i].getQuantity());
-//			System.out.println(cheapHotelBids[i].getQuantity());
-		}
 		
 		//Allocation
 //		for (int i = 0; i < 5; i++)
@@ -213,7 +165,55 @@ public class HotelAgent extends SubAgent {
 			
 			
 			// Program logic here
+			// Bid the price and Assign type of hotel to the customer
+			for (int i = 0; i < 8 ; i++)
+			{
+				Client client = masterAgent.clientList.get(i);
+				int hotelval = masterAgent.agent.getClientPreference(i, TACAgent.HOTEL_VALUE);
 			
+			// If customer's value is more than 70, we will try to buy expensive hotel rooms			
+				if (hotelval > 70)
+				{
+					client.hotelAssignment = hotelType.expensiveHotel;
+					System.out.println("Expensive hotel requested by client"+ i);
+				}
+				else
+				{
+					client.hotelAssignment = hotelType.cheapHotel;
+					System.out.println("Cheap hotel requested by client"+ i);
+				}	
+							
+				// Assign Hotel for each night
+				for (int j = client.arrivalDay; j < client.departureDay; j++)
+				{
+					//int auctionID;
+					if (client.hotelAssignment == hotelType.expensiveHotel)
+					{
+						//auctionID = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_GOOD_HOTEL, j);
+						// calculate the price per room for this customer (add the hotel bonus if booking expensive hotel)
+						float budgetPerNight = (HOTEL_BUDGET + client.hotelvalue) / (client.departureDay - client.arrivalDay);
+						expensiveHotelBids[j].addBidPoint(1, budgetPerNight);
+						System.out.println("Submitted bid for expensive hotel on day " + j);
+					}
+					else 
+					{
+						//auctionID = TACAgent.getAuctionFor(TACAgent.CAT_HOTEL, TACAgent.TYPE_CHEAP_HOTEL, j);
+						// calculate the price per room for this customer
+						float budgetPerNight = HOTEL_BUDGET / (client.departureDay - client.arrivalDay);
+						cheapHotelBids[j].addBidPoint(1, budgetPerNight);
+						System.out.println("Submitted bid for cheap hotel on day " + j);
+					}
+				}
+			}
+			
+			// Submit the completed bids
+			for (int i = 1 ; i <= 4; i++)
+			{
+				masterAgent.agent.submitBid(expensiveHotelBids[i]);
+				masterAgent.agent.submitBid(cheapHotelBids[i]);
+//				System.out.println(expensiveHotelBids[i].getQuantity());
+//				System.out.println(cheapHotelBids[i].getQuantity());
+			}
 		
 		}
 	}
